@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,6 +10,7 @@
     android:padding="20dp">
 
     <TextView
+        android:id="@+id/tvTitleDashboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Dashboard Mahasiswa"
@@ -16,22 +19,53 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/tvSubtitleDashboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Berikut daftar layanan akademik mahasiswa yang tersedia pada aplikasi."
+        android:text="Pilih layanan akademik dan mode tampilan yang ingin digunakan."
         android:textColor="#64748B"
         android:textSize="14sp" />
+
+    <RadioGroup
+        android:id="@+id/rgLayoutMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="List" />
+
+        <RadioButton
+            android:id="@+id/rbGrid"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Grid" />
+
+        <RadioButton
+            android:id="@+id/rbCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Card" />
+    </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMenuAkademik"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="12dp"
         android:layout_weight="1"
         android:clipToPadding="false"
         android:paddingBottom="8dp"
-        android:scrollbars="vertical" />
+        tools:listitem="@android:layout/simple_list_item_1" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnKembaliHomeMahasiswa"

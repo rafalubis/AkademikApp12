@@ -1,94 +1,107 @@
 package com.app.akademikapp.ui.main
-
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.akademikapp.MainActivity
 import com.app.akademikapp.R
 import com.app.akademikapp.data.model.MenuAkademik
 import com.app.akademikapp.databinding.FragmentMahasiswaBinding
-import com.app.akademikapp.ui.adapter.MenuAkademikAdapter
-
+import com.app.akademikapp.ui.adapter.MenuAkademikCardAdapter
+import com.app.akademikapp.ui.adapter.MenuAkademikGridAdapter
+import com.app.akademikapp.ui.adapter.MenuAkademikListAdapter
+import com.app.akademikapp.utils.MenuLayoutMode
 class MahasiswaFragment : Fragment(R.layout.fragment_mahasiswa) {
-
     private var _binding: FragmentMahasiswaBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var menuAdapter: MenuAkademikAdapter
-
+    private val menuList = listOf(
+        MenuAkademik(
+            title = "Profil Mahasiswa",
+            description = "Identitas dan data akademik dasar mahasiswa.",
+            iconResId = android.R.drawable.ic_menu_myplaces
+        ),
+        MenuAkademik(
+            title = "Jadwal Kuliah",
+            description = "Daftar jadwal perkuliahan yang sedang aktif.",
+            iconResId = android.R.drawable.ic_menu_agenda
+        ),
+        MenuAkademik(
+            title = "Nilai Akademik",
+            description = "Hasil studi dan nilai setiap mata kuliah.",
+            iconResId = android.R.drawable.ic_menu_info_details
+        ),
+        MenuAkademik(
+            title = "KRS",
+            description = "Kelola mata kuliah yang diambil semester ini.",
+            iconResId = android.R.drawable.ic_menu_edit
+        ),
+        MenuAkademik(
+            title = "Presensi",
+            description = "Riwayat kehadiran kegiatan perkuliahan.",
+            iconResId = android.R.drawable.ic_menu_recent_history
+        ),
+        MenuAkademik(
+            title = "Tagihan",
+            description = "Rincian pembayaran dan status tagihan akademik.",
+            iconResId = android.R.drawable.ic_menu_view
+        )
+    )
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         _binding = FragmentMahasiswaBinding.bind(view)
-
-        setupRecyclerView()
+        setupLayoutModeSelector()
+        applyLayoutMode(MenuLayoutMode.LIST)
         setupActions()
     }
-
-    private fun setupRecyclerView() {
-
-        val menuList = listOf(
-
-            MenuAkademik(
-                title = "Profil Mahasiswa",
-                description = "Menampilkan identitas dan data akademik dasar mahasiswa."
-            ),
-
-            MenuAkademik(
-                title = "Jadwal Kuliah",
-                description = "Melihat daftar jadwal perkuliahan yang sedang aktif."
-            ),
-
-            MenuAkademik(
-                title = "Nilai Akademik",
-                description = "Menampilkan hasil studi dan nilai setiap mata kuliah."
-            ),
-
-            MenuAkademik(
-                title = "Kartu Rencana Studi",
-                description = "Melihat dan mengelola mata kuliah yang diambil."
-            ),
-
-            MenuAkademik(
-                title = "Presensi Perkuliahan",
-                description = "Melihat riwayat kehadiran dalam kegiatan perkuliahan."
-            ),
-
-            MenuAkademik(
-                title = "Informasi Tagihan",
-                description = "Menampilkan rincian pembayaran dan status tagihan akademik."
-            )
-        )
-
-        menuAdapter = MenuAkademikAdapter(menuList) { selectedMenu ->
-
-            Toast.makeText(
-                requireContext(),
-                "Anda memilih menu: ${selectedMenu.title}",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        binding.rvMenuAkademik.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = menuAdapter
-            setHasFixedSize(true)
+    private fun setupLayoutModeSelector() {
+        binding.rgLayoutMode.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.rbList -> applyLayoutMode(MenuLayoutMode.LIST)
+                R.id.rbGrid -> applyLayoutMode(MenuLayoutMode.GRID)
+                R.id.rbCard -> applyLayoutMode(MenuLayoutMode.CARD)
+            }
         }
     }
-
+    private fun applyLayoutMode(mode: MenuLayoutMode) {
+        when (mode) {
+            MenuLayoutMode.LIST -> {
+                binding.rvMenuAkademik.layoutManager =
+                    LinearLayoutManager(requireContext())
+                binding.rvMenuAkademik.adapter =
+                    MenuAkademikListAdapter(menuList) { showSelectedMenu(it) }
+            }
+            MenuLayoutMode.GRID -> {
+                binding.rvMenuAkademik.layoutManager =
+                    GridLayoutManager(requireContext(), 2)
+                binding.rvMenuAkademik.adapter =
+                    MenuAkademikGridAdapter(menuList) { showSelectedMenu(it) }
+            }
+            MenuLayoutMode.CARD -> {
+                binding.rvMenuAkademik.layoutManager =
+                    LinearLayoutManager(requireContext())
+                binding.rvMenuAkademik.adapter =
+                    MenuAkademikCardAdapter(menuList) { showSelectedMenu(it) }
+            }
+        }
+        binding.rvMenuAkademik.setHasFixedSize(true)
+    }
+    private fun showSelectedMenu(menu: MenuAkademik) {
+        Toast.makeText(
+            requireContext(),
+            "Anda memilih menu: ${menu.title}",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
     private fun setupActions() {
-
         binding.btnKembaliHomeMahasiswa.setOnClickListener {
-            (activity as? MainActivity)
-                ?.supportFragmentManager
-                ?.popBackStack()
+            (activity as? MainActivity)?.supportFragmentManager?.popBackStack()
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.rvMenuAkademik.adapter = null
         _binding = null
     }
 }
